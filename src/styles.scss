@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Estilos personalizados */
+body {
+  @apply bg-gray-100 text-gray-800 font-sans;
+}
+
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold mb-2;
+}
+
+h1 {
+  @apply text-3xl;
+}
+
+h2 {
+  @apply text-2xl;
+}
+
+button {
+  @apply transition duration-300 ease-in-out;
+}
+
+input, select {
+  @apply border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm;
+}
+
+table {
+  @apply w-full border-collapse;
+}
+
+th, td {
+  @apply border-b border-gray-200 p-3;
+}
+
+th {
+  @apply bg-gray-100 font-semibold text-left;
+}
