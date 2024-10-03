@@ -1,5 +1,8 @@
 <div class="container mx-auto p-4">
   <h2 class="text-2xl font-bold mb-4">{{isEditMode ? 'Editar' : 'Crear'}} Producto</h2>
+  <button (click)="goBack()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+    Atrás
+  </button>
   <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="max-w-md">
     <div class="mb-4">
       <label for="name" class="block mb-2">Nombre:</label>
@@ -10,8 +13,8 @@
       <input type="number" id="quantity" formControlName="quantity" class="w-full px-3 py-2 border rounded">
     </div>
     <div class="mb-4">
-      <label for="entryDate" class="block mb-2">Fecha de Ingreso:</label>
-      <input type="date" id="entryDate" formControlName="entryDate" class="w-full px-3 py-2 border rounded">
+      <label for="dateOfEntry" class="block mb-2">Fecha de Ingreso:</label>
+      <input type="date" id="dateOfEntry" formControlName="dateOfEntry" class="w-full px-3 py-2 border rounded">
     </div>
     <div class="mb-4">
       <label for="userId" class="block mb-2">Usuario:</label>
@@ -25,4 +28,7 @@
       {{isEditMode ? 'Actualizar' : 'Crear'}} Producto
     </button>
   </form>
+  <button (click)="goBack()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4">
+    Cancelar
+  </button>
 </div>

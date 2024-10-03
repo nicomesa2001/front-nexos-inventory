@@ -14,6 +14,6 @@ export interface Product {
   id: number;
   name: string;
   quantity: number;
-  entryDate: string;
+  dateOfEntry: Date | string;
   user: User;
 }

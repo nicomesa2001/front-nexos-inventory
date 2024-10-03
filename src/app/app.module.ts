@@ -9,6 +9,10 @@ import { ProductFormComponent } from './components/product-form/product-form.com
 import { UserListComponent } from './components/user-list/user-list.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { RouterModule } from '@angular/router';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ProductStoreModule } from './store/store.module';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -25,7 +29,11 @@ import { RouterModule } from '@angular/router';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    StoreModule.forRoot(),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false }),
+    ProductStoreModule,
+    EffectsModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]

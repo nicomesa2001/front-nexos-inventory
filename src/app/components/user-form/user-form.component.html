@@ -1,5 +1,8 @@
 <div class="container mx-auto p-4">
   <h2 class="text-2xl font-bold mb-4">{{isEditMode ? 'Editar' : 'Crear'}} Usuario</h2>
+  <button (click)="goBack()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">
+    Atrás
+  </button>
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="max-w-md">
     <div class="mb-4">
       <label for="name" class="block mb-2">Nombre:</label>
@@ -21,4 +24,7 @@
       {{isEditMode ? 'Actualizar' : 'Crear'}} Usuario
     </button>
   </form>
+  <button (click)="goBack()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4">
+    Cancelar
+  </button>
 </div>

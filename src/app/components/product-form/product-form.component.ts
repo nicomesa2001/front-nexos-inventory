@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from 'src/app/service/product.service';
 import { UserService } from 'src/app/service/user.service';
 import { Product, User } from 'src/app/models/models';
+import { AlertifyService } from 'src/app/service/alertify.service';
 
 @Component({
   selector: 'app-product-form',
@@ -21,12 +22,13 @@ export class ProductFormComponent implements OnInit {
     private productService: ProductService,
     private userService: UserService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private alertify: AlertifyService
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       quantity: ['', [Validators.required, Validators.min(0)]],
-      entryDate: ['', Validators.required],
+      dateOfEntry: ['', Validators.required],
       userId: ['', Validators.required]
     });
   }
@@ -45,7 +47,7 @@ export class ProductFormComponent implements OnInit {
   loadUsers(): void {
     this.userService.getUsers().subscribe(
       (data: User[]) => this.users = data,
-      (error: any) => console.error('Error fetching users:', error)
+      (error: any) => console.error('Error al cargar usuarios: ', error.error.message)
     );
   }
 
@@ -55,11 +57,11 @@ export class ProductFormComponent implements OnInit {
         this.productForm.patchValue({
           name: product.name,
           quantity: product.quantity,
-          entryDate: product.entryDate,
+          dateOfEntry: product.dateOfEntry,
           userId: product.user.id
         });
       },
-      (error: any) => console.error('Error fetching product:', error)
+      (error: any) => this.alertify.error('Error al cargar el producto ' + error.error.message)
     );
   }
 
@@ -71,15 +73,29 @@ export class ProductFormComponent implements OnInit {
       };
       if (this.isEditMode && this.productId) {
         this.productService.updateProduct(this.productId, productData).subscribe(
-          () => this.router.navigate(['/products']),
-          (error: any) => console.error('Error updating product:', error)
+          () => {
+            this.alertify.success('Producto actualizado con éxito');
+            this.router.navigate(['/products']);
+          },
+          (error: any) => {
+            this.alertify.error('Error al actualizar el producto ' + error.error.message);
+          }
         );
       } else {
         this.productService.addProduct(productData).subscribe(
-          () => this.router.navigate(['/products']),
-          (error: any) => console.error('Error adding product:', error)
+          () => {
+            this.router.navigate(['/products']);
+            this.alertify.success('Producto añadido con éxito');
+          },
+          (error: any) => {
+            this.alertify.error('Error al añadir el producto ' + error.error.message);
+          }
         );
       }
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/products']);
   }
 }

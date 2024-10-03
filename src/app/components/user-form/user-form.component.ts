@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/service/user.service';
 import { RoleService } from 'src/app/service/role.service';
 import { User, Role } from 'src/app/models/models';
+import { AlertifyService } from 'src/app/service/alertify.service';
 
 @Component({
   selector: 'app-user-form',
@@ -21,7 +22,8 @@ export class UserFormComponent implements OnInit {
     private userService: UserService,
     private roleService: RoleService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private alertify: AlertifyService,
   ) {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
@@ -44,7 +46,7 @@ export class UserFormComponent implements OnInit {
   loadRoles(): void {
     this.roleService.getRoles().subscribe(
       (data: Role[]) => this.roles = data,
-      (error: any) => console.error('Error fetching roles:', error)
+      (error: any) => console.error('Error cargando roles: ', error.error.message)
     );
   }
 
@@ -57,7 +59,7 @@ export class UserFormComponent implements OnInit {
           roleId: user.role.id
         });
       },
-      (error: any) => console.error('Error fetching user:', error)
+      (error: any) => console.error('Error cargando usuarios: ', error.error.message)
     );
   }
 
@@ -69,15 +71,26 @@ export class UserFormComponent implements OnInit {
       };
       if (this.isEditMode && this.userId) {
         this.userService.updateUser(this.userId, userData).subscribe(
-          () => this.router.navigate(['/users']),
-          (error: any) => console.error('Error updating user:', error)
+          () => {
+            this.router.navigate(['/users']);
+            this.alertify.success('Usuario actualizado con éxito');
+          },
+          (error: any) => {
+            this.alertify.error('Error al actualizar el producto ' + error.error.message);
+          }
         );
       } else {
         this.userService.addUser(userData).subscribe(
           () => this.router.navigate(['/users']),
-          (error: any) => console.error('Error adding user:', error)
+          (error: any) => {
+            this.alertify.error('Error al añadir el usuario ' + error.error.message);
+          }
         );
       }
     }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/users']);
   }
 }

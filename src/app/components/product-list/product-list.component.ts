@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ProductService } from 'src/app/service/product.service';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Product } from 'src/app/models/models';
+import { AlertifyService } from 'src/app/service/alertify.service';
+import { loadProducts, setFilter, deleteProduct as deleteProductAction } from 'src/app/store/actions';
+import { ProductState } from 'src/app/store/reducers';
 
 @Component({
   selector: 'app-product-list',
@@ -9,35 +13,31 @@ import { Product } from 'src/app/models/models';
   styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent implements OnInit {
-  products: Product[] = [];
+  products$: Observable<Product[]>;
+  filter: string = '';
 
-  constructor(private productService: ProductService, public router: Router) { }
+  constructor(private store: Store<{ products: ProductState }>, public router: Router, private alertify: AlertifyService) {
+    this.products$ = this.store.select(state => state.products.filteredProducts);
+  }
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.store.dispatch(loadProducts());
   }
 
-  loadProducts(): void {
-    this.productService.getProducts().subscribe(
-      (data: Product[]) => this.products = data,
-      (error: any) => console.error('Error fetching products:', error)
-    );
+  onSearch(): void {
+    this.store.dispatch(setFilter({ filter: this.filter }));
   }
 
-  editProduct(id: number): void {
-    this.router.navigate(['/products/edit', id]);
+  editProduct(productId: number): void {
+    this.router.navigate(['/products/edit', productId]);
   }
 
-  deleteProduct(id: number): void {
+  deleteProduct(productId: number): void {
+    const userId = 1
     if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      // Aquí deberías obtener el ID del usuario actual
-      const currentUserId = 1; // Esto es un ejemplo, debes implementar la lógica para obtener el ID del usuario actual
-      this.productService.deleteProduct(id, currentUserId).subscribe(
-        () => {
-          this.loadProducts();
-        },
-        (error: any) => console.error('Error deleting product:', error)
-      );
+      this.store.dispatch(deleteProductAction({ id: productId, userId }));
+      this.alertify.success('Producto eliminado con éxito');
+      this.store.dispatch(loadProducts());
     }
   }
 }

@@ -1,8 +1,8 @@
-// user-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/service/user.service';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/models';
+import { AlertifyService } from 'src/app/service/alertify.service';
 
 @Component({
   selector: 'app-user-list',
@@ -12,7 +12,7 @@ import { User } from 'src/app/models/models';
 export class UserListComponent implements OnInit {
   users: User[] = [];
 
-  constructor(private userService: UserService, public router: Router) { }
+  constructor(private userService: UserService, public router: Router, private alertifyService: AlertifyService) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -21,7 +21,7 @@ export class UserListComponent implements OnInit {
   loadUsers(): void {
     this.userService.getUsers().subscribe(
       (data: User[]) => this.users = data,
-      (error: any) => console.error('Error fetching users:', error)
+      (error: any) => this.alertifyService.error('Error al cargar los usuarios ' + error.error.message)
     );
   }
 
@@ -33,9 +33,10 @@ export class UserListComponent implements OnInit {
     if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
       this.userService.deleteUser(id).subscribe(
         () => {
+          this.alertifyService.success('Usuario eliminado con éxito');
           this.loadUsers();
         },
-        (error: any) => console.error('Error deleting user:', error)
+        (error: any) => this.alertifyService.error('Error al eliminar el usuario ' + error.error.message)
       );
     }
   }
